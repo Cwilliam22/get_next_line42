@@ -1,0 +1,66 @@
+- char	*get_next_line(int fd)
+- fd = file descriptor => descripteur de fichier
+- un descripteur de fichier est un entier
+- Tout entier >2 correspond generalement a des fichiers
+- la fonction get_next_line(int fd) => va donc s'appliquer sur sur le fichier pointe par la fonction
+
+- int fd = open("monfichier.txt", O_RDONLY);
+- open() ouvre le fichier
+
+- declarer une variable char *buffer pour stocker ce que lis read() 
+- la taille de ce buffer peut varier voila pourquoi on l'appelle de la maniere suivante : char buffer[BUFFER_SIZE]
+- pas oublier de mettre un static en plus pour que la variable garde sa valeur entre les appels de la fonction => static char buffer[BUFFER_SIZE]
+- taille maximal du buffer (memoir tampon) et des 1024 bytes/octets soit 1 mega byte/octet (dans ce cas de figure)
+
+- ssize_t read(int fd, void *buf, size_t count)
+- cette fonction va lire dans le fichier (int fd) et va ensuite copier count(size_t count) * caractere dans le buffer(void *buf) et return le nbr d'octetts lus (peut etre inferieur a count)
+- si une erreur se produit dans read => return (-1)
+- void *buf => pointeur vers un tampon dans lequel les donnees seront stocke
+- la fonction read va servir à remplir de buffer d'autant de caractere qu'il a d'espace voila pourquoi count sera egal a la taille du buffer
+- première idée pour la fonction read => read(fd, buffer, BUFFER_SIZE)
+
+Questions :
+- Est ce qu'il y a besoin de mallocer la mémoire du tampon pour être sur de ne pas avoir de problème ?
+- Si le tampon est remplis lors de la première itération comment sera t il possible de faire une nouvelle itération et de mettre des caractère dans le buffer deja pleins ?
+- La question précédente par du principe que la taille du buffer peut etre variable c'est a dire que le code doit aussi bien fonctionné avec une taille de 1024 octets qu'avec une taille de un octet.
+Y aurait-il donc besoin d'une autre variable plus grande dans laquelle stocker le résultat de chaque itération ?
+
+buffer :
+- Puisqu'il est déclaré comme statique, sa mémoire est allouée au début de l'exécution du programme, et elle est réutilisée à chaque appel de la fonction get_next_line. 
+- Il n'y a donc pas de risque de dépassement de mémoire, car le tampon reste toujours de taille fixe.
+- Dans la plupart des cas, il est utile d'avoir une autre variable pour construire progressivement la ligne entière avant de la retourner, surtout si ta ligne est plus longue que la taille du buffer.
+- Cependant cette nouvelle variable sera allouée dynamiquement (avec malloc).
+
+Questions :
+- Cette nouvelle variable comment connaître la taille à lui mallocer ?
+- Comment déclarer cette nouvelle variable ?
+
+- On ne sait jamais à l'avance la taille exacte de la ligne qui va être lus.
+- Il faut donc allouer de la mémoire dynamiquement et, si nécessaire, réallouer plus de mémoire au fur et à mesure que l'on lis des morceaux de la ligne.
+- La variable pour stocker la construction de la ligne sera déclaré de la manière suivante :
+    => char *line = malloc(128)
+- Ensuite en cas de manque d'espace dans cette variable on va agrandir cette mémoir avec realloc :
+    => line = realloc(line, nouvelle_taille)
+- realloc va permettre d'ajuster la mémoire au fur et à mesure que la ligne se construira.
+
+Questions :
+- Où déclarer la taille du buffer ? (BUFFER_SIZE)
+
+- Préférable de déclarer la taille du buffer comme une constante globale.
+- Il est donc préférable de déclarer cette constante dans le fichier .h .
+- Visibilité : Le fichier d'en-tête est accessible par plusieurs fichiers .c, donc si tu déclares BUFFER_SIZE dans le fichier .h, tous les fichiers qui incluent cet en-tête pourront l'utiliser.
+- Facilité de modification : Si tu veux changer la taille du buffer, tu n'auras qu'à modifier BUFFER_SIZE dans un seul endroit (le fichier .h), et cela sera répercuté dans tout ton projet.
+- Cohérence : Cela garantit que la taille du buffer reste la même dans tout le projet.
+
+Exemple :
+#ifndef GET_NEXT_LINE_H
+#define GET_NEXT_LINE_H
+
+#ifndef BUFFER_SIZE
+#define BUFFER_SIZE 32  // Tu définis une valeur par défaut si non définie
+#endif
+
+char *get_next_line(int fd);
+
+#endif
+
