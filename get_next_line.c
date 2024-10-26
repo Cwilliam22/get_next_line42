@@ -12,43 +12,95 @@
 
 #include "get_next_line.h"
 
-ssize_t	read(int fd, void *buf, size_t count)
+size_t	ft_condition(char *str)
 {
-	return ();
+	size_t	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if(str[i] == '\n')
+			return (1);
+		i++;
+	}
+	return(0);
+}
+
+char 	*ft_jsp(char *str)
+{
+	char *dst;
+	size_t	i;
+	size_t	j;
+
+	i = 0;
+	j = 0;
+	while (str[i] && str[i] != '\n')
+		i++;
+	dst = malloc(sizeof(char) * (i + 1));
+	if (!dst)
+		return (NULL);
+	while (j < i)
+	{
+		dst[j] = str[j];
+		j++;
+	}
+	dst[j] = '\0';
+	return (dst);
 }
 
 char	*get_next_line(int fd)
 {
 	char	*line;
-	static char	buffer[BUFFER_SIZE];
-	int	i;
+	char	buffer[BUFFER_SIZE];
+	size_t	count;
+	char	*dst;
 
-	i = 0;
-	fd = open("get_next_line.txt", O_RDONLY);
-	line = malloc(sizeof());
+	line = malloc(sizeof(char) * BUFFER_SIZE);
 	if (!line)
 		return (NULL);
-	while ((bytes_read = read(fd, buffer, BUFFER_SIZE)) > 0) {
-    while (i < bytes_read) {
-        total_length++;
-        char *new_line = realloc(line, total_length + 1);
-        if (!new_line) {
-            free(line);
-            return NULL;
-        }
+	line[0] = '\0';
+	/*if (count <= 0)
+		free(line);
+		return (NULL);*/
+    while (ft_condition(line) == 0)
+	{
+		count = read(fd, buffer, BUFFER_SIZE);
+		if (count <= 0)
+		{
+			free(line);
+			return (NULL);
+		}
+		buffer[count] = '\0';
+		line = ft_strjoin(line, buffer);
+	}
+	dst = ft_jsp(line);
+	line = ft_strchr(line, 10);
+	return (dst);
+}
 
-        line = new_line;
-        line[total_length - 1] = buffer[i];
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <unistd.h>
 
-        if (buffer[i] == '\n') {
-            line[total_length] = '\0';
-            return line;
-        }
+char *get_next_line(int fd);
 
-        i++;
+int main(void)
+{
+    int fd = open("get_next_line.txt", O_RDONLY);
+    if (fd == -1) {
+        perror("Erreur lors de l'ouverture du fichier");
+        return 1;
     }
-}
 
-	return (line);
-}
+    char *line = get_next_line(fd);
+    if (line) {
+        printf("%s\n", line);
+        free(line);
+    } else {
+        printf("Aucune ligne lue ou erreur\n");
+    }
 
+    close(fd);
+    return 0;
+}
