@@ -64,3 +64,12 @@ char *get_next_line(int fd);
 
 #endif
 
+Problème d'execution du programme :
+=> zsh: abort      ./a.out
+Le message zsh: abort ./a.out signifie que le programme s'est arrêté brusquement à cause d'une erreur grave. Ce genre d'arrêt est souvent dû à des erreurs de gestion de mémoire ou d'accès à des zones mémoire incorrectes (comme essayer de lire ou écrire là où on ne devrait pas).
+
+Causes possibles et solutions simples
+Accès mémoire invalide :
+Cela arrive souvent lorsqu'on essaie d'accéder à une adresse mémoire non allouée ou libérée, ou si on dépasse la taille d'une zone mémoire.
+Problèmes d'allocation de mémoire :
+Si une allocation de mémoire (malloc) échoue et qu'on essaie quand même d'utiliser le pointeur non initialisé, le programme peut planter.

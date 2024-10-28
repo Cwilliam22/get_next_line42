@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wcapt <wcapt@student.42lausanne.ch>        +#+  +:+       +#+        */
+/*   By: wcapt <wcapt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 12:05:54 by wcapt             #+#    #+#             */
-/*   Updated: 2024/10/23 16:48:45 by wcapt            ###   ########.fr       */
+/*   Updated: 2024/10/27 19:05:02 by wcapt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 #endif
 
 char	*get_next_line(int fd);
-size_t	ft_strlen(char *str);
+size_t	ft_strlen(const char *str);
 char	*ft_substr(const char *s, unsigned int start, size_t len);
 char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_strchr(const char *str, int a);

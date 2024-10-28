@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wcapt <wcapt@student.42lausanne.ch>        +#+  +:+       +#+        */
+/*   By: wcapt <wcapt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 12:06:09 by wcapt             #+#    #+#             */
-/*   Updated: 2024/10/20 15:23:47 by wcapt            ###   ########.fr       */
+/*   Updated: 2024/10/27 19:02:31 by wcapt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-size_t	ft_strlen(char *str)
+size_t	ft_strlen(const char *str)
 {
 	size_t	i;
 

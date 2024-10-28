@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: wcapt <wcapt@student.42lausanne.ch>        +#+  +:+       +#+        */
+/*   By: wcapt <wcapt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 12:06:12 by wcapt             #+#    #+#             */
-/*   Updated: 2024/10/23 17:22:01 by wcapt            ###   ########.fr       */
+/*   Updated: 2024/10/28 16:00:26 by wcapt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,34 +48,43 @@ char 	*ft_jsp(char *str)
 	return (dst);
 }
 
-char	*get_next_line(int fd)
+char *get_next_line(int fd)
 {
-	char	*line;
-	char	buffer[BUFFER_SIZE];
-	size_t	count;
-	char	*dst;
+    char    *line;
+    char    buffer[BUFFER_SIZE + 1];
+    ssize_t count;
+    char    *dst;
 
-	line = malloc(sizeof(char) * BUFFER_SIZE);
-	if (!line)
-		return (NULL);
-	line[0] = '\0';
-	/*if (count <= 0)
-		free(line);
-		return (NULL);*/
+    line = malloc(sizeof(char) * 1);
+    if (!line)
+        return (NULL);
+    line[0] = '\0';
     while (ft_condition(line) == 0)
-	{
-		count = read(fd, buffer, BUFFER_SIZE);
-		if (count <= 0)
-		{
-			free(line);
-			return (NULL);
-		}
-		buffer[count] = '\0';
-		line = ft_strjoin(line, buffer);
-	}
-	dst = ft_jsp(line);
-	line = ft_strchr(line, 10);
-	return (dst);
+    {
+        count = read(fd, buffer, BUFFER_SIZE);
+        if (count == -1)
+        {
+            free(line);
+            return (NULL);
+        }
+        if (count == 0)
+            break;
+        buffer[count] = '\0';
+        char *temp = line;
+        line = ft_strjoin(line, buffer);
+        free(temp);
+        if (!line)
+            return (NULL);
+    }
+    dst = ft_jsp(line);
+    char *temp = line;
+    line = ft_strchr(line, '\n');
+    if (line && *line == '\n')
+        line++;
+    else
+        line = NULL;
+    free(temp);
+    return (dst);
 }
 
 #include <stdio.h>
