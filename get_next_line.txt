@@ -1,3 +1,5 @@
+
+
 - char	*get_next_line(int fd)
 - fd = file descriptor => descripteur de fichier
 - un descripteur de fichier est un entier

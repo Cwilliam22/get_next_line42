@@ -6,7 +6,7 @@
 /*   By: wcapt <wcapt@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 12:06:12 by wcapt             #+#    #+#             */
-/*   Updated: 2024/11/05 17:05:09 by wcapt            ###   ########.fr       */
+/*   Updated: 2024/11/06 18:04:48 by wcapt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,42 +30,59 @@ char	*ft_jsp(char *str)
 {
 	char	*dst;
 	size_t	i;
-	size_t	j;
+	size_t	size;
 
 	i = 0;
-	j = 0;
 	while (str[i] && str[i] != '\n')
 		i++;
-	dst = malloc(sizeof(char) * (i + 1));
+	size = i + 1;
+	if (str[i] == '\n')
+		size++;
+	dst = malloc(sizeof(char) * size);
 	if (!dst)
 		return (NULL);
-	while (j < i)
+	i = 0;
+	while (str[i] && str[i] != '\n')
 	{
-		dst[j] = str[j];
-		j++;
+		dst[i] = str[i];
+		i++;
 	}
-	dst[j] = '\0';
+	if (str[i] == '\n')
+		dst[i++] = '\n';
+	dst[i] = '\0';
 	return (dst);
 }
 
 char	*get_next_line(int fd)
 {
-	static char	*line;
-	char	buffer[BUFFER_SIZE + 1];
-	ssize_t	count;
-	char	*dst;
-	char	*temp;
+	static char	*line = NULL;
+	char		buffer[BUFFER_SIZE + 1];
+	ssize_t		count;
+	char		*dst;
+	char		*temp;
 
-	line = malloc(sizeof(char) * 1);
-	if (!line)
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	line[0] = '\0';
+	if (!line)
+	{
+		line = malloc(sizeof(char) * 1);
+		if (!line)
+			return (NULL);
+		line[0] = '\0';
+	}
 	while (ft_condition(line) == 0)
 	{
 		count = read(fd, buffer, BUFFER_SIZE);
 		if (count == -1)
 		{
 			free(line);
+			line = NULL;
+			return (NULL);
+		}
+		if (count == 0 && *line == '\0')
+		{
+			free(line);
+			line = NULL;
 			return (NULL);
 		}
 		if (count == 0)
@@ -78,16 +95,26 @@ char	*get_next_line(int fd)
 			return (NULL);
 	}
 	dst = ft_jsp(line);
+	if (!dst)
+		return (NULL);
 	temp = line;
-	line = ft_strchr(line, 10);
-	if (line && *line == '\n')
-		line++;
+	line = ft_strchr(line, '\n');
+	if (line)
+	{
+		line = ft_strdup(line + 1);
+		free(temp);
+		if (!line)
+			return (NULL);
+	}
 	else
+	{
+		free(temp);
 		line = NULL;
-	free(temp);
+	}
 	return (dst);
 }
 
+/*
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -97,29 +124,30 @@ char *get_next_line(int fd);
 
 int main(void)
 {
-    int fd = open("get_next_line.txt", O_RDONLY);
-    if (fd == -1) {
-        perror("Erreur lors de l'ouverture du fichier");
-        return 1;
-    }
+	int fd = open("get_next_line.txt", O_RDONLY);
+	if (fd == -1) {
+		perror("Erreur lors de l'ouverture du fichier");
+		return 1;
+	}
 
-    int n = 5;
+	int n = 20;
 
-    int i = 0;
-    char *line;
+	int i = 0;
+	char *line;
 
 
-    while (i < n) {
-        line = get_next_line(fd);
-        if (line) {
-            printf("Ligne %d: %s\n", i + 1, line);
-            free(line);
-        } else {
-            printf("Aucune ligne lue ou erreur lors de la ligne %d\n", i + 1);
-        }
-        i++;
-    }
-    close(fd);
+	while (i < n) {
+		line = get_next_line(fd);
+		if (line) {
+			printf("Ligne %d: %s\n", i + 1, line);
+			free(line);
+		} else {
+			printf("Aucune ligne lue ou erreur lors de la ligne %d\n", i + 1);
+		}
+		i++;
+	}
+	close(fd);
 
-    return 0;
+	return 0;
 }
+*/
