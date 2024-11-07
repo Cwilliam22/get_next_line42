@@ -75,3 +75,19 @@ Accès mémoire invalide :
 Cela arrive souvent lorsqu'on essaie d'accéder à une adresse mémoire non allouée ou libérée, ou si on dépasse la taille d'une zone mémoire.
 Problèmes d'allocation de mémoire :
 Si une allocation de mémoire (malloc) échoue et qu'on essaie quand même d'utiliser le pointeur non initialisé, le programme peut planter.
+
+
+AGAIN : 
+
+Pour l'instant 3 fonctions 
+
+get_next_line() :
+    - Vérifie fd et la taille du buffer pour ne pas avoir de d'entrées fausses
+    - Vérifie que rien ne se trouve dans la ligne et initialise cette dernière comme étant une chaîne vide (\0)
+    - Boucle While qui verifie que la fonction ft_condition renvoie bien 0
+    - Condition si count = -1 (il y a une erreur), alors 
+
+ft_condition() :
+    - Regarde dans une string s'il y a un \n
+    - S'il y a un \n la fonction return (1)
+    - Si non return (0)
