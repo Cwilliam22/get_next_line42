@@ -6,7 +6,7 @@
 /*   By: wcapt <wcapt@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 12:06:12 by wcapt             #+#    #+#             */
-/*   Updated: 2024/11/06 18:04:48 by wcapt            ###   ########.fr       */
+/*   Updated: 2024/11/10 16:15:15 by wcapt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ size_t	ft_condition(char *str)
 	return (0);
 }
 
-char	*ft_jsp(char *str)
+char	*ft_put_line(char *str)
 {
 	char	*dst;
 	size_t	i;
@@ -53,11 +53,38 @@ char	*ft_jsp(char *str)
 	return (dst);
 }
 
+char	*read_and_store(int fd, char **line)
+{
+	char	buffer[BUFFER_SIZE + 1];
+	ssize_t	count;
+	char	*temp;
+
+	while (ft_condition(*line) == 0)
+	{
+		count = read(fd, buffer, BUFFER_SIZE);
+		if (count <= 0)
+		{
+			if (count == -1 || (*line && **line == '\0'))
+			{
+				free(*line);
+				*line = NULL;
+				return (NULL);
+			}
+			break ;
+		}
+		buffer[count] = '\0';
+		temp = *line;
+		*line = ft_strjoin(*line, buffer);
+		free(temp);
+		if (!*line)
+			return (NULL);
+	}
+	return (*line);
+}
+
 char	*get_next_line(int fd)
 {
 	static char	*line = NULL;
-	char		buffer[BUFFER_SIZE + 1];
-	ssize_t		count;
 	char		*dst;
 	char		*temp;
 
@@ -70,31 +97,9 @@ char	*get_next_line(int fd)
 			return (NULL);
 		line[0] = '\0';
 	}
-	while (ft_condition(line) == 0)
-	{
-		count = read(fd, buffer, BUFFER_SIZE);
-		if (count == -1)
-		{
-			free(line);
-			line = NULL;
-			return (NULL);
-		}
-		if (count == 0 && *line == '\0')
-		{
-			free(line);
-			line = NULL;
-			return (NULL);
-		}
-		if (count == 0)
-			break ;
-		buffer[count] = '\0';
-		temp = line;
-		line = ft_strjoin(line, buffer);
-		free(temp);
-		if (!line)
-			return (NULL);
-	}
-	dst = ft_jsp(line);
+	if (!read_and_store(fd, &line))
+		return (NULL);
+	dst = ft_put_line(line);
 	if (!dst)
 		return (NULL);
 	temp = line;
@@ -150,4 +155,29 @@ int main(void)
 
 	return 0;
 }
+*/
+/*
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⣷⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⣧⠙⢿⣦⡀⠀⠀⠀⠀⠀⠀⠀⣠⣶⣦⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⠀⠀⠙⢿⣦⡀⠀⠀⠀⢀⣾⡿⠉⣿⡄⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⠀⠀⠀⠀⠙⣿⣄⣠⣴⡿⠋⠀⠀⣿⡇⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⠀⠀⠀⠀⠀⠈⠿⠟⠉⠀⠀⠀⢀⣿⠇⠀⠀⠀⠀⠀
+⠀⠀⠀⣿⡿⠿⠿⠿⠷⣶⣾⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣤⣤⣴⣶⣶⡀
+⠀⠀⠀⠹⣿⡀⠀⠀⠀⠀⠀⠀⢀⡤⠖⠚⠉⠉⠉⠉⠛⠲⣄⠀⠈⠉⠉⠉⠁⣼⡟⠀
+⠀⠀⠀⠀⠹⣷⡀⠀⠀⠀⢀⡔⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠳⡄⠀⠀⢀⣼⡟⠀⠀
+⠀⠀⠀⠀⠀⢹⣷⠀⠀⢀⡎⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⡀⢠⣾⡏⠀⠀⠀
+⠀⢀⣠⣴⡾⠟⠋⠀⠀⣸⠀⠀⠀⣴⣒⣒⣛⣛⣛⣋⣉⣉⣉⣙⣛⣷⠀⠙⠿⣶⣤⡀
+⣾⣿⡋⠁⠀⠀⠀⠀⠀⡏⠀⠀⡄⠉⠉⠁⠀⠈⢹⢨⠃⠀⠀⠀⠀⠙⡄⠀⠀⣨⣿⠟
+⠈⠛⠿⣷⣦⣀⠀⠀⠀⡇⠀⠸⡟⠛⠿⠛⠛⠛⢻⢿⠋⠹⠟⠉⠉⠙⡇⣠⣾⠟⠁⠀
+⠀⠀⠀⢀⣽⣿⠇⠀⠀⡇⠀⠀⠳⣄⣀⠀⣀⣠⠞⠈⢷⣄⣀⣀⣠⣾⠁⢿⣧⡀⠀⠀
+⠀⢠⣴⡿⠋⠁⠀⠀⢀⡧⠄⠀⠦⣀⣈⣉⠁⠀⠠⡀⠘⡆⠠⠤⠴⢿⣄⠀⠙⣿⣦⠀
+⠀⠹⢿⣦⣤⣀⠀⢰⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠳⣤⠇⠀⠀⠀⣼⢘⣷⡿⠟⠋⠀
+⠀⠀⠀⠈⠉⣿⡇⠈⠣⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡿⠻⣿⡀⠀⠀⠀
+⠀⠀⠀⠀⢸⣿⣤⣤⣤⣤⢧⠀⢀⡆⣠⠴⠒⠋⢹⠋⠉⢹⠗⠒⠄⣷⣾⡿⠇⠀⠀⠀
+⠀⠀⠀⠀⠀⠉⠉⠉⣿⣇⣈⣆⠀⠳⠤⠀⠀⠀⠈⣇⡖⡍⠀⠠⣾⣿⡿⠇⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠛⠛⠛⢻⣷⣄⠀⠀⠀⠀⠁⠉⠀⠀⣠⣾⠟⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣉⣿⣷⠲⠤⠤⠤⣤⣶⣿⣟⠁⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⢀⣴⣶⡿⠿⠛⠛⢋⢹⡦⣄⣀⡤⢿⢉⠛⠛⠿⣷⣦⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⣿⠏⠀⠀⠀⠀⢀⠇⠈⡇⠀⠀⠀⠘⡎⣆⠀⠀⠀⢻⣧⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠈⠿⣶⣶⣶⣶⣶⣾⣶⣾⣷⣶⣶⣶⣶⣷⣾⣷⣶⣶⣾⡿⠀⠀⠀⠀⠀
 */
