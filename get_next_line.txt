@@ -80,10 +80,10 @@ Si une allocation de mémoire (malloc) échoue et qu'on essaie quand même d'uti
 AGAIN : 
 
 get_next_line() :
-    - déclarations des différentes variables
+    - Déclarations des différentes variables
     - Vérification de 2 conditions pour le return (NULL) en cas d'erreur (OR)
-            - Première condition => Regarde la fonction check_null() 
-            - Deuxième condition =>
+            - Première condition => Regarde la fonction check_null() => return (faux = 0 ou vrai = 1)
+            - Deuxième condition => Regarde la fonction read_and_store()
 
 check_null() :
     - Fonction qui prend le FileDesciptor et la line en variable
@@ -92,4 +92,12 @@ check_null() :
     - Vérifie ensuite la line si elle n'est pas vide
     - Si oui on va mallocer un char pour y mettre le \0 afin de montrer une chaine sans caractère
     - Attention à toujours mettre la sécurité pour le malloc au cas ou se dernier fait de la M
+    - Mettre un \0 à la fin de la string
+
+read_and_store() :
+    - Déclarations des différentes variables
+    - Boucle tant que ft_condition() = 0
+    - Initialisation de la variable count qui va utiliser la fonction read() pour connaître le nombre de caractère(bytes) dans le buffer
+    - Condition si count <= 0 sont des cas particuliers pour lesquels on va sortir de la fonction bien avant la fin (break)
+        - Condition si count = -1 (cas d'erreur) ou si il y a directement \0 (rien dans la ligne), alors on free et on return (NULL)
     - 

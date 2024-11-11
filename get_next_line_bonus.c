@@ -1,16 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: wcapt <wcapt@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 12:06:12 by wcapt             #+#    #+#             */
-/*   Updated: 2024/11/11 21:40:49 by wcapt            ###   ########.fr       */
+/*   Updated: 2024/11/11 21:41:35 by wcapt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+#define MAX_FD 1024
 
 size_t	ft_condition(char *str)
 {
@@ -53,37 +55,38 @@ char	*ft_put_line(char *str)
 	return (dst);
 }
 
-char *read_and_store(int fd, char **line)
+char	*read_and_store(int fd, char **line)
 {
-	ssize_t count;
-    char *temp;
+	char	buffer[BUFFER_SIZE + 1];
+	ssize_t	count;
+	char	*temp;
 
-    char *buffer = malloc(BUFFER_SIZE + 1);
-    if (!buffer)
-        return NULL;
-    while (ft_condition(*line) == 0)
-    {
-        count = read(fd, buffer, BUFFER_SIZE);
-        if (count <= 0)
-        {
-            if (count == -1 || (*line && **line == '\0'))
-                return (free(*line), *line = NULL, free(buffer), NULL);
-            break;
-        }
-        buffer[count] = '\0';
-        temp = *line;
-        *line = ft_strjoin(*line, buffer);
-        free(temp);
-        if (!*line)
-            return (free(buffer), NULL);
-    }
-    return (free(buffer), *line);
+	while (ft_condition(*line) == 0)
+	{
+		count = read(fd, buffer, BUFFER_SIZE);
+		if (count <= 0)
+		{
+			if (count == -1 || (*line && **line == '\0'))
+			{
+				free(*line);
+				*line = NULL;
+				return (NULL);
+			}
+			break ;
+		}
+		buffer[count] = '\0';
+		temp = *line;
+		*line = ft_strjoin(*line, buffer);
+		free(temp);
+		if (!*line)
+			return (NULL);
+	}
+	return (*line);
 }
-
 
 int	check_null(int fd, char **line)
 {
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || fd >= MAX_FD || BUFFER_SIZE <= 0)
 		return (1);
 	if (!*line)
 	{
@@ -97,31 +100,32 @@ int	check_null(int fd, char **line)
 
 char	*get_next_line(int fd)
 {
-	static char	*line = NULL;
+	static char	*lines[MAX_FD] = {NULL};
 	char		*dst;
 	char		*temp;
 
-	if (check_null(fd, &line) || !read_and_store(fd, &line))
+	if (check_null(fd, &lines[fd]) || !read_and_store(fd, &lines[fd]))
 		return (NULL);
-	dst = ft_put_line(line);
+	dst = ft_put_line(lines[fd]);
 	if (!dst)
 		return (NULL);
-	temp = line;
-	line = ft_strchr(line, '\n');
-	if (line)
+	temp = lines[fd];
+	lines[fd] = ft_strchr(lines[fd], '\n');
+	if (lines[fd])
 	{
-		line = ft_strdup(line + 1);
+		lines[fd] = ft_strdup(lines[fd] + 1);
 		free(temp);
-		if (!line)
+		if (!lines[fd])
 			return (NULL);
 	}
 	else
 	{
 		free(temp);
-		line = NULL;
+		lines[fd] = NULL;
 	}
 	return (dst);
 }
+
 
 /*
 #include <stdio.h>
