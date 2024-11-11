@@ -79,65 +79,17 @@ Si une allocation de mémoire (malloc) échoue et qu'on essaie quand même d'uti
 
 AGAIN : 
 
-Pour l'instant 3 fonctions 
-
 get_next_line() :
-    - Vérifie fd et la taille du buffer pour ne pas avoir de d'entrées fausses
-    - Vérifie que rien ne se trouve dans la ligne et initialise cette dernière comme étant une chaîne vide (\0)
-    - Début de la boucle while
-    - Boucle While qui verifie que la fonction ft_condition renvoie bien 0
-    - Définition de count avec la fonction read()
-    - Condition si count = -1 (il y a une erreur), alors on libère la mémoire allouée à line, line = NULL et return (NULL)
-    - Condition si count = 0 et que le pointeur sur le premier caractère de la chaîne line = \0, alors fait la même chose que la condition précédente
-    - Condition si count = 0, alors sort de la boucle directement 
-    - Si aucune de ces 3 conditions alors continue
-    - On met un \0 à la fin du buffer. Comme ça le buffer a toutes les caractéristiques d'une vraie string et peut donc êter lue comme telle
-    - On assemble la line et le buffer dans line avec la fonction ft_strjoin() ce qui permet de tout mettre de line à chaque iteration
-    - Fin de la boucle while
-    - Si line contient un \n ou que le fichier est fini, la boucle s'arrête
-    - On envoie ensuite la premiére ligne (avant \n) dans la variable dst avec la fonction ft_jsp
+    - déclarations des différentes variables
+    - Vérification de 2 conditions pour le return (NULL) en cas d'erreur (OR)
+            - Première condition => Regarde la fonction check_null() 
+            - Deuxième condition =>
 
-ft_condition() :
-    - Regarde dans une string s'il y a un \n
-    - S'il y a un \n la fonction return (1)
-    - Si non return (0)
-
-read() :
-    - ssize_t read(int fd, void *buf, size_t count)
-    - fd est le descripteur de fichier à partir duquel lire (souvent obtenu en utilisant la fonction open())
-    - buf est un pointeur vers un tampon dans lequel les données lues seront stockées
-    - count le nombre maximal d'octets à lire
-    - Retourne le nbr d'octets lus
-    - Retourne 0 si la fin du fichier (EOF = End Of File) a été atteinte
-    - Retourne -1 en cas d'erreur 
-
-ft_strjoin() : 
+check_null() :
+    - Fonction qui prend le FileDesciptor et la line en variable
+    - Vérifie dans sa première condition que fd et le BUFFER_SIZE ne sont pas sujet aux erreurs
+    - Si oui return (1), sinon continue
+    - Vérifie ensuite la line si elle n'est pas vide
+    - Si oui on va mallocer un char pour y mettre le \0 afin de montrer une chaine sans caractère
+    - Attention à toujours mettre la sécurité pour le malloc au cas ou se dernier fait de la M
     - 
-
-ft_put_line() :
-    - Regarde dans une string et renvoie un char*
-    - Première boucle while agit tant que str[i] n'est pas finie ou que str[i] != \n
-    - Dans le cas ou ceci est respecté on regarde le prochain caractère
-    - Si ça n'est pas le cas sortie de la boucle
-    - On donne i + 1 à la variable size. Et ainsi connaître le nombre de caractèreavant le premier retour à la ligne
-    - Condition si str[i] pointe sur \n, alors on augmente size de 1 pour l'ajouter dans le nbr de caractère de la string
-    - On malloc la chaine de destination avec la size mais pas de (size + 1) pour le \0 puisque on a déja fait size++ sur la ligne d'avant
-    - En toute logique la condition juste avant est censé être juste sinon le malloc fait ensuite n'alloue pas assez de mémoire pour \0
-    - Condition si le malloc est faux ou qu'il y a un problème quelconque => return(NULL) (sécurité pour le malloc)
-    - Réinitialisation de i à 0 pour réutiliser la variable sans avoir besoin d'en ajouter une nouvelle
-    - Deuxième boucle while à les mêmes conditions que la première, cependant elle va servir cette fois-ci à move les caractère de str à dst
-    - Condition 
-
-    Questions GPT :
-    Est-ce qu'il y a assez de mémoire allouée pour le \0 et un \n ?
-    Oui, la taille allouée pour dst est suffisante. L'allocation est calculée comme suit :
-    size = i + 1 garantit que la mémoire allouée peut contenir les caractères jusqu'à i + le caractère \0 pour la fin de chaîne.
-    Si un \n est présent à la position i, size est augmenté de 1 pour tenir compte de ce \n.Ainsi, il y a toujours suffisamment de mémoire pour contenir la ligne complète avec un \n (le cas échéant) et un \0 à la fin.
-    La dernière condition n'est-elle pas forcément vraie si str contient un ou plusieurs \n ?
-    Non, ce n'est pas forcément vrai. La condition if (str[i] == '\n') n'est vraie que si un \n est effectivement trouvé à la fin de la ligne que la fonction copie. Si la chaîne ne contient pas de \n à cet endroit (par exemple, si c'est la fin de la chaîne ou si la ligne n'a pas de retour à la ligne), alors la fonction se contente de copier la chaîne sans ajouter de \n.
-    En résumé : Cette condition n'est vraie que si un \n a été trouvé dans la chaîne à la position i.
-    Pourquoi ajouter un \n dans la ligne retournée ?
-    La fonction a pour but de simuler un comportement typique du projet get_next_line : elle renvoie une ligne de texte avec ou sans le caractère \n. Dans le cadre de ce projet, chaque "ligne" inclut potentiellement un \n, donc l'ajouter est une manière de préserver cette information.
-    Si un \n est trouvé à la fin de la ligne, il est inclus dans la chaîne retournée.
-    Si aucun \n n'est trouvé, la ligne est simplement terminée par un \0, sans ajouter de \n.
-    Pourquoi faire ça ? C'est pour permettre à la fonction get_next_line de mieux gérer le texte ligne par ligne, y compris les retours à la ligne. Le caractère \n dans la chaîne retournée est utile pour savoir où la ligne se termine réellement dans le cas où la chaîne contient plusieurs lignes.

@@ -6,7 +6,7 @@
 /*   By: wcapt <wcapt@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 12:06:12 by wcapt             #+#    #+#             */
-/*   Updated: 2024/11/10 16:15:15 by wcapt            ###   ########.fr       */
+/*   Updated: 2024/11/11 13:07:58 by wcapt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,22 +82,27 @@ char	*read_and_store(int fd, char **line)
 	return (*line);
 }
 
+int	check_null(int fd, char **line)
+{
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (1);
+	if (!*line)
+	{
+		*line = malloc(sizeof(char) * 1);
+		if (!*line)
+			return (1);
+		(*line)[0] = '\0';
+	}
+	return (0);
+}
+
 char	*get_next_line(int fd)
 {
 	static char	*line = NULL;
 	char		*dst;
 	char		*temp;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
-		return (NULL);
-	if (!line)
-	{
-		line = malloc(sizeof(char) * 1);
-		if (!line)
-			return (NULL);
-		line[0] = '\0';
-	}
-	if (!read_and_store(fd, &line))
+	if (check_null(fd, &line) || !read_and_store(fd, &line))
 		return (NULL);
 	dst = ft_put_line(line);
 	if (!dst)
