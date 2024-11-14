@@ -6,7 +6,7 @@
 /*   By: wcapt <wcapt@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 12:06:09 by wcapt             #+#    #+#             */
-/*   Updated: 2024/11/06 16:40:34 by wcapt            ###   ########.fr       */
+/*   Updated: 2024/11/14 03:04:00 by wcapt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,30 +71,5 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	while (*s2)
 		dst[i++] = *s2++;
 	dst[i] = '\0';
-	return (dst);
-}
-
-char	*ft_substr(const char *s, unsigned int start, size_t len)
-{
-	size_t			i;
-	size_t			j;
-	unsigned int	len_s;
-	char			*dst;
-
-	i = start;
-	j = 0;
-	if (!s)
-		return (NULL);
-	len_s = ft_strlen(s);
-	if (start >= len_s)
-		return (ft_strdup(""));
-	if (len_s - start < len)
-		len = len_s - start;
-	dst = malloc(sizeof(char) * (len + 1));
-	if (!dst)
-		return (NULL);
-	while (j < len)
-		dst[j++] = s[i++];
-	dst[j] = '\0';
 	return (dst);
 }
