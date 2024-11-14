@@ -84,6 +84,18 @@ get_next_line() :
     - Vérification de 2 conditions pour le return (NULL) en cas d'erreur (OR)
             - Première condition => Regarde la fonction check_null() => return (faux = 0 ou vrai = 1)
             - Deuxième condition => Regarde la fonction read_and_store()
+    - Mettre la line (avant \n) dans la dst
+    - Sécurité pour la dst (lignes pas forcément utile car déja vérifiées)
+    - temp = line est la pour libérée la mémoire de l'ancienne line proprement sans risquer de quelconque problème
+    - La variable line est redéfinit pour enlever la ligne qui a déja été retourner
+    - Condition si line contient encore des caractères après avoir sorti la première ligne du fichier, 
+        alors on va copier (ft_strdup()) le reste des ces caractères après le \n (c'est pour ça line + 1)
+            - On free la variable temp pour éviter une fuite de mémoire (sécurité)
+            - S'il y a une erreur avec la nouvelle chaîne on return (NULL) => erreur mémoire
+    - Sinon on free directement temp (pour les mêmes raisons) et on met la line à NULL (si la line est déja vide) 
+
+    Résumé : Cette fonction est la fonction principale de ce projet.
+    Elle a donc pour objectif de donner la ligne suivante du doc à chaque itération
 
 check_null() :
     - Fonction qui prend le FileDesciptor et la line en variable
@@ -94,10 +106,45 @@ check_null() :
     - Attention à toujours mettre la sécurité pour le malloc au cas ou se dernier fait de la M
     - Mettre un \0 à la fin de la string
 
+    Résumé : 
+
 read_and_store() :
     - Déclarations des différentes variables
     - Boucle tant que ft_condition() = 0
     - Initialisation de la variable count qui va utiliser la fonction read() pour connaître le nombre de caractère(bytes) dans le buffer
     - Condition si count <= 0 sont des cas particuliers pour lesquels on va sortir de la fonction bien avant la fin (break)
         - Condition si count = -1 (cas d'erreur) ou si il y a directement \0 (rien dans la ligne), alors on free et on return (NULL)
+    - 
+
+    Résumé : 
+
+ft_condition() :
+    - Déclarations des différentes variables
+    - Initialisation de i à 0 (position dans la string)
+    - Boucle qui va parcourir tous les caractères de la string
+    - Condition si le caractère lu correspond au \n => return (1)
+    - S'il n'y a rien de particulier la boucle va aller jusqu'au bout de la string et return (0)
+    - 1 => valeur trouvée OU 0 => valeur non-trouvée
+
+    Résumé : La fonction cherche un \n et return un size_t, 1 si elle a trouvé sinon 0
+
+ft_put_line() :
+    - Déclarations des différentes variables
+    - Initialisation de i à 0
+    - Boucle qui va incrémenter i si la string n'est pas finie ou si elle ne tombe pas sur un \n
+    - Size va donc prendre la valeur final de i + 1 (car on garde assez de place pour le \0)
+    - Condition si si la string à la position i possède un \n, alors size++ pour prévoir l'espace pour le \n dans dst
+    - Malloc de la dst avec size qui prend en compte le \0 et le \n
+    - Sécurité pour le malloc
+    - Remettre i à 0 pour pouvoir réutiliser la variable (pas besoin d'une nouvelle variable)
+    - Boucle poour mettre les caractères de la line (string donnée) dans la dst
+    - Les conditions sont les même qu'avant dans le boucle pour ne pas mettre plus ou moins dans la dst
+    - Condition si on trouve un \n, alors on le rajoute ensuire à la dst
+    - On met un \0 à la fin de la string
+    - Return(dst)
+
+    Résumé : La fonction va copier les caractères de la line jusqu'au \n dans la dst (string)
+
+Bonus : 
+    - 
     - 
