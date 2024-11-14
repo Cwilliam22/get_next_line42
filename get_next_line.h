@@ -6,12 +6,16 @@
 /*   By: wcapt <wcapt@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 12:05:54 by wcapt             #+#    #+#             */
-/*   Updated: 2024/11/13 22:27:59 by wcapt            ###   ########.fr       */
+/*   Updated: 2024/11/14 04:30:45 by wcapt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
+
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 42
+# endif
 
 # include <fcntl.h>
 # include <stdlib.h>

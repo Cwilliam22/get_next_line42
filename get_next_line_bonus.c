@@ -6,7 +6,7 @@
 /*   By: wcapt <wcapt@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 12:06:12 by wcapt             #+#    #+#             */
-/*   Updated: 2024/11/14 02:57:45 by wcapt            ###   ########.fr       */
+/*   Updated: 2024/11/14 04:36:42 by wcapt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ int	check_null(int fd, char **line)
 
 char	*get_next_line(int fd)
 {
-	static char	*lines[MAX_FD] = {NULL};
+	static char	*lines[MAX_FD];
 	char		*dst;
 	char		*temp;
 
@@ -133,30 +133,9 @@ char *get_next_line(int fd);
 
 int main(void)
 {
-	int fd = open("get_next_line.txt", O_RDONLY);
-	if (fd == -1) {
-		perror("Erreur lors de l'ouverture du fichier");
-		return 1;
-	}
-
-	int n = 20;
-
-	int i = 0;
-	char *line;
-
-
-	while (i < n) {
-		line = get_next_line(fd);
-		if (line) {
-			printf("Ligne %d: %s\n", i + 1, line);
-			free(line);
-		} else {
-			printf("Aucune ligne lue ou erreur lors de la ligne %d\n", i + 1);
-		}
-		i++;
-	}
-	close(fd);
-
-	return 0;
+	printf("%s",get_next_line(fd[1]));
+	printf("%s",get_next_line(fd[2]));
+	printf("%s",get_next_line(fd[1]));
+	printf("%s",get_next_line(fd[2]));
 }
 */

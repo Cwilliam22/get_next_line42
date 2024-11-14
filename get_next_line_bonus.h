@@ -6,7 +6,7 @@
 /*   By: wcapt <wcapt@student.42lausanne.ch>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/20 12:05:54 by wcapt             #+#    #+#             */
-/*   Updated: 2024/11/14 02:58:10 by wcapt            ###   ########.fr       */
+/*   Updated: 2024/11/14 04:30:32 by wcapt            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,10 @@
 # define GET_NEXT_LINE_BONUS_H
 
 # define MAX_FD 1024
+
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 42
+# endif
 
 # include <fcntl.h>
 # include <stdlib.h>
